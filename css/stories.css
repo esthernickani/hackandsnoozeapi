@@ -1,0 +1,60 @@
+/* Lists of stories */
+
+.stories-list {
+  margin: 20px 5px;
+}
+
+.stories-list > li {
+  color: gray;
+  font-size: 0.8rem;
+  margin: 10px 0;
+}
+
+#stories-loading-msg {
+  font-weight: bold;
+  font-size: 150%;
+  margin: 20px 30px;
+}
+
+
+/* Individual stories */
+
+.story-link {
+  color: black;
+  font-size: 0.85rem;
+  font-weight: normal;
+  margin: 18px 0;
+}
+
+.story-link:hover {
+  text-decoration: none;
+}
+
+.story-author {
+  margin-left: 2em;
+}
+
+.story-user {
+  display: block;
+}
+
+/* Basic styling for the delete button */
+.delete-button {
+  color: rgb(12, 10, 10); /* Text color */
+  border: none;
+  padding: 1px 1px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Styling for the trashcan icon */
+
+
+/* On hover effect */
+.delete-button:hover {
+  /*background-color: #d32f2f; /* Darker red color on hover */
+  color: #d32f2f;
+}
+
