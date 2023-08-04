@@ -108,7 +108,46 @@ form > hr {
 
 .individual-story {
   display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+p {
+  margin: 0;
+}
+
+a .story-link {
+  font-weight: bold;
+}
+
+.story-author {
+  margin: 0;
+  color: #036603;
+}
+
+.storyinfo {
+  display: flex;
   flex-direction: column;
+  gap: 4px;
+}
+
+.story-user {
+  color: #FF7F50;
+}
+
+#favorite-checkbox {
+  visibility:hidden;
+  font-size:15px;
+  cursor:pointer;
+}
+#favorite-checkbox:before {
+ content: "\2605";
+ position: absolute;
+ visibility:visible;
+}
+#favorite-checkbox:checked:before {
+ content: "\2606";
+ position: absolute;
 }
 
 /* responsive queries for tightening things up for mobile. */

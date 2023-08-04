@@ -181,35 +181,11 @@ function showFavorites() {
     }
   }
 
-  function addPersonalStoryToLocalStorage(storyId) {
-    let createdStory = JSON.parse(localStorage.getItem("createdstory")) || [];
-    if (!createdStory.includes(storyId)) {
-      //console.log(storyId)
-      createdStory.push(storyId);
-      //console.log(favorites);
-      localStorage.setItem("createdstory", JSON.stringify(createdStory));
-    } else {
-      return;
-    }
-    
-  }
 
-  async function removeStory(e) {
-    if (currentUser) {
-      console.log(e.target.className)
-      if (e.target.classList.contains("fa-trash-alt")) {
-        let deletedStoryId = $(e.target).parent().parent().attr('id');
-        let token = currentUser.loginToken;
-        const response = await axios.delete(`https://hack-or-snooze-v3.herokuapp.com/stories/${deletedStoryId}`, {token})
-
-        $allStoriesList.empty();
-        showMystories();
-      }
-  }
-}
+  
   
 $("#nav-favorites").on("click", showFavorites)
 $("#nav-mystories").on("click", showMystories)
 $allStoriesList.on("click", handlingFavorites)
-$allStoriesList.on("click", removeStory)
+
 

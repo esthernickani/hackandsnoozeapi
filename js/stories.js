@@ -27,7 +27,8 @@ function generateStoryMarkup(story) {
   const isChecked = () => addChecked(story)
   return $(`
       <li id="${story.storyId}" class="individual-story">
-        <input type="checkbox" id="favorite-checkbox" checked>
+        <p>${currentStoryindex++}.</p>
+        <input type="checkbox" id="favorite-checkbox" ${isChecked()? 'checked' : ''}>
         <div class="storyinfo">
           <div class="titleandurl">
             <a href="${story.url}" target="a_blank" class="story-link">
@@ -116,6 +117,23 @@ async function createStory(e) {
 
 }
 
+async function removeStory(e) {
+  if (currentUser) {
+    console.log(e.target.className)
+    if (e.target.classList.contains("fa-trash-alt")) {
+      let deletedStoryId = $(e.target).parent().parent().attr('id');
+
+      console.log(deletedStoryId, currentUser.loginToken)
+      
+      await storyList.deleteStory(deletedStoryId, currentUser);
+
+      $allStoriesList.empty();
+      showMystories();
+    }
+}
+}
+
+$allStoriesList.on("click", removeStory)
 $("form").on( "submit", createStory);
 
 

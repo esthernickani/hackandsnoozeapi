@@ -94,6 +94,18 @@ class StoryList {
     return story;
     // UNIMPLEMENTED: complete this function!
   }}
+
+  async deleteStory(storyId, user) {
+    
+    const response = await axios.delete (
+      `${BASE_URL}/stories/${storyId}`, 
+      {"token": user.loginToken}
+    )
+
+    this.stories = this.stories.filter(story => story.storyId !== storyId)
+    user.ownStories =  user.ownStories.filter(story => story.storyId !== storyId)
+
+  }
 }
 
 
