@@ -29,6 +29,8 @@ async function login(evt) {
   $loginForm.hide();
   $signupForm.hide();
 
+  getAndShowStoriesOnStart();
+
 }
 
 $loginForm.on("submit", login);
@@ -119,73 +121,5 @@ function updateUIOnUserLogin() {
   updateNavOnLogin();
 }
 
-/**Handling favorites */
-async function handlingFavorites(e) {
-  if (currentUser) {
-      if ( e.target.id === "favorite-checkbox" && $(e.target).is(":checked")) {
-        let favoritedStoryId = $(e.target).parent().attr('id');
-        let token = currentUser.loginToken;
-        let response = await axios.post(
-          `https://hack-or-snooze-v3.herokuapp.com/users/${currentUser.username}/favorites/${favoritedStoryId}`,
-          {token})
-    } else if (e.target.id === "favorite-checkbox" && (!$(e.target).is(":checked"))) {
-        let unfavoritedStoryId = $(e.target).parent().attr('id');
-        let token = currentUser.loginToken
-        let response = await axios.delete(
-          `https://hack-or-snooze-v3.herokuapp.com/users/${currentUser.username}/favorites/${unfavoritedStoryId}`,
-        {token})
-  }}
-
- //console.log(favoriteStoryArr)
-  
-}
-  
-function showFavorites() {
-  $('.submit-story').hide();
-  $loginForm.hide();
-  $signupForm.hide();
-  $allStoriesList.empty();
-
-  console.log(currentUser.favorites)
-
-  if (currentUser.favorites.length !== 0) {
-    for (let favoriteStory of currentUser.favorites) {
-        const $story = generateStoryMarkup(favoriteStory);
-        $allStoriesList.append($story);
-      }
-    } else {
-      $("#all-stories-list").html("<p>No favorties added!</p>")
-}
-  }
-
-
-  function showMystories() {
-    $('.submit-story').hide();
-    $loginForm.hide();
-    $signupForm.hide();
-    $allStoriesList.empty();
-
-    console.log(storyList.stories)
-
-    if (currentUser) {
-      const myStories = storyList.stories.filter(story => story.username === currentUser.username)
-      console.log(myStories)
-        for (let myStory of myStories) {
-          console.log(myStory)
-          const $story = generateStoryMarkupForPersonalStories(myStory);
-          $allStoriesList.append($story);
-        }
-      }
-    else {
-      $("#all-stories-list").html("<p>No stories created!</p>")
-    }
-  }
-
-
-  
-  
-$("#nav-favorites").on("click", showFavorites)
-$("#nav-mystories").on("click", showMystories)
-$allStoriesList.on("click", handlingFavorites)
 
 

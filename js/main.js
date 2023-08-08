@@ -28,6 +28,11 @@ function hidePageComponents() {
   components.forEach(c => c.hide());
 }
 
+$( document ).ready(function() {
+  $loginForm.show();
+  $signupForm.show();
+})
+
 /** Overall function to kick off the app. */
 
 async function start() {

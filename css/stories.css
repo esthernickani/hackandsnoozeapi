@@ -35,6 +35,10 @@
   display: block;
 }
 
+.fa-star:hover {
+  cursor: pointer;
+}
+
 /* Basic styling for the delete button */
 .delete-button {
   color: rgb(12, 10, 10); /* Text color */

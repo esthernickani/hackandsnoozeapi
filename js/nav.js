@@ -8,6 +8,7 @@
 
 function navAllStories(evt) {
   console.debug("navAllStories", evt);
+  $("form").addClass("hidden");
   hidePageComponents();
   putStoriesOnPage();
 }

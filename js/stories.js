@@ -2,7 +2,6 @@
 
 // This is the global list of the stories, an instance of StoryList
 let storyList;
-let favoriteStoryArr = [];
 let myCreatedStories = [];
 /** Get and show stories when site first loads. */
 
@@ -24,11 +23,10 @@ function generateStoryMarkup(story) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
-  const isChecked = () => addChecked(story)
+  
   return $(`
       <li id="${story.storyId}" class="individual-story">
-        <p>${currentStoryindex++}.</p>
-        <input type="checkbox" id="favorite-checkbox" ${isChecked()? 'checked' : ''}>
+        <i class="${starType(story)} favorite"></i>
         <div class="storyinfo">
           <div class="titleandurl">
             <a href="${story.url}" target="a_blank" class="story-link">
@@ -45,13 +43,14 @@ function generateStoryMarkup(story) {
 
 function generateStoryMarkupForPersonalStories(story) {
   const hostName = story.getHostName();
-  const isChecked = () => addChecked(story);
   return $(`
       <li id="${story.storyId}">
         <button class="delete-button">
         <i class="fas fa-trash-alt"></i>
         </button>
-        <input type="checkbox" id="favorite-checkbox" ${isChecked()? 'checked' : ''}>
+        <span class="star">
+        <i class="${starType(story)}"></i>
+        </span>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -62,14 +61,12 @@ function generateStoryMarkupForPersonalStories(story) {
       `);
 }
 
-const addChecked = (currentStory) => {
- 
-  if(currentUser.favorites.length !== 0) {
-    const favoriteIdArr = currentUser.favorites.map(story => story.storyId)
-    console.log(favoriteIdArr.includes(currentStory.storyId))
-    return currentUser.favorites.includes(currentStory.storyId)
+const starType = (currentStory) => {
+  const favoriteIdArr = currentUser.favorites.map(story => story.storyId)
+  if(currentUser.favorites.length !== 0 && favoriteIdArr.includes(currentStory.storyId)) {
+    return "fas fa-star"
   } else {
-    return false
+    return "far fa-star"
   }
 }
 
@@ -103,10 +100,9 @@ async function createStory(e) {
     const newStory = await storyList.addStory(currentUser, { author, title, url });
     generateStoryMarkup(newStory);
 
+    $("form").addClass("hidden");
     $allStoriesList.prepend(newStory);
 
-    myCreatedStories.push(newStory.storyId);
-    addPersonalStoryToLocalStorage(newStory.storyId)
 
     $( "#author" ).val('') 
     $( "#title" ).val('') 
@@ -137,5 +133,84 @@ $allStoriesList.on("click", removeStory)
 $("form").on( "submit", createStory);
 
 
+/**Handling favorites */
+async function handlingFavorites(e) {
+  if (currentUser) {
+      if ( e.target.classList.contains("far")) {
+        console.log('click')
+        console.log(e.target.className)
+        
+        let favoritedStoryId = $(e.target).parent().attr('id');
+        let token = currentUser.loginToken;
+        const response = await axios.post(
+          `https://hack-or-snooze-v3.herokuapp.com/users/${currentUser.username}/favorites/${favoritedStoryId}`,
+          {token})
+          $(e.target).removeClass("far").addClass("fas");
+          const story = storyList.stories.find(story => story.storyId === favoritedStoryId);
+          currentUser.addFavorite(story)
+          
+    } else if (e.target.classList.contains("fas")) {
+        let unfavoritedStoryId = $(e.target).parent().attr('id');
+        let token = currentUser.loginToken
+        const response = await axios ({
+          url: `${BASE_URL}/users/${currentUser.username}/favorites/${unfavoritedStoryId}`, 
+          method: "DELETE",
+          data: {token}
+        });
+        //console.log(response)
+        currentUser.removeFavorite(unfavoritedStoryId);
+        $(e.target).removeClass("fas").addClass("far");
+  }}
+
+ //console.log(favoriteStoryArr)
+  
+}
+  
+function showFavorites() {
+  $('.submit-story').hide();
+  $loginForm.hide();
+  $signupForm.hide();
+  $allStoriesList.empty();
+
+  console.log(storyList)
+
+  if (currentUser.favorites.length !== 0) {
+    for (let favoriteStory of currentUser.favorites) {
+        const $story = generateStoryMarkup(favoriteStory);
+        $allStoriesList.append($story);
+      }
+    } else {
+      $("#all-stories-list").html("<p>No favorties added!</p>")
+}
+  }
+
+
+  function showMystories() {
+    $('.submit-story').hide();
+    $loginForm.hide();
+    $signupForm.hide();
+    $allStoriesList.empty();
+
+      if (currentUser) {
+        const myStories = storyList.stories.filter(story => story.username === currentUser.username)
+          if(myStories.length !== 0) {
+            for (let myStory of myStories) {
+              console.log(myStory)
+              const $story = generateStoryMarkupForPersonalStories(myStory);
+              $allStoriesList.append($story);
+            }
+        }
+      else {
+        $("#all-stories-list").html("<p>No stories created!</p>")
+      }
+    } 
+  }
+
+
+  
+  
+$("#nav-favorites").on("click", showFavorites)
+$("#nav-mystories").on("click", showMystories)
+$allStoriesList.on("click", handlingFavorites)
 
 /**Adding to my stories */

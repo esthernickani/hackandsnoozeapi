@@ -26,7 +26,7 @@ class Story {
 
   getHostName() {
     // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+    return new URL(this.url).host;
   }
 }
 
@@ -95,18 +95,24 @@ class StoryList {
     // UNIMPLEMENTED: complete this function!
   }}
 
-  async deleteStory(storyId, user) {
-    
-    const response = await axios.delete (
-      `${BASE_URL}/stories/${storyId}`, 
-      {"token": user.loginToken}
-    )
+  async deleteStory(deleteStoryId, user) {
+    try {
+      const token = user.loginToken
+      await axios ({
+      url: `${BASE_URL}/stories/${deleteStoryId}`, 
+      method: "DELETE",
+      data: {token}
+    });
 
-    this.stories = this.stories.filter(story => story.storyId !== storyId)
-    user.ownStories =  user.ownStories.filter(story => story.storyId !== storyId)
-
+    this.stories = this.stories.filter(story => story.storyId !== deleteStoryId)
+    user.ownStories =  user.ownStories.filter(story => story.storyId !== deleteStoryId)
+} catch(e) {
+  console.log(e)
+}
   }
 }
+
+
 
 
 /******************************************************************************
@@ -194,6 +200,13 @@ class User {
     );
   }
 
+  addFavorite(story) {
+    this.favorites.push(story)
+  }
+
+  removeFavorite(unfavStoryId) {
+    this.favorites = this.favorites.filter(story => story.storyId !== unfavStoryId)
+  }
   /** When we already have credentials (token & username) for a user,
    *   we can log them in automatically. This function does that.
    */
